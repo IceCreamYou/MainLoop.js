@@ -92,7 +92,7 @@ You can also check out a
 ## Notes
 
 This project is
-[MIT-licensed](https://github.com/IceCreamYou/MainLoop.js/blob/gh-pages/LICENSE.md).
+[MIT-licensed](https://github.com/IceCreamYou/MainLoop.js/blob/gh-pages/LICENSE.txt).
 
 Compatible with all modern browsers (IE9+) including mobile browsers, as well
 as node.js and io.js. There are no dependencies.
