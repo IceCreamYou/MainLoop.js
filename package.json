@@ -1,0 +1,33 @@
+{
+    "name": "mainloop.js",
+    "version": "1.0.0",
+    "description": "A well-constructed JavaScript main loop useful for games and other animated applications.",
+    "homepage": "https://github.com/IceCreamYou/MainLoop.js",
+    "bugs": "https://github.com/IceCreamYou/MainLoop.js/issues",
+    "directories": {
+        "lib": "build",
+        "example": "demo"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/IceCreamYou/MainLoop.js.git"
+    },
+    "keywords": [
+        "main",
+        "loop",
+        "game",
+        "animation",
+        "time"
+    ],
+    "author": "Isaac Sukin (http://www.isaacsukin.com/)",
+    "license": "MIT",
+    "readmeFilename": "README.md",
+    "devDependencies": {
+        "grunt": "~0.4.5",
+        "grunt-contrib-jshint": "~0.10.0",
+        "grunt-contrib-uglify": "~0.7.0",
+        "grunt-contrib-watch": "~0.6.1",
+        "grunt-jscs": "~1.2.0",
+        "grunt-jsduck": "~1.0.0"
+    }
+}

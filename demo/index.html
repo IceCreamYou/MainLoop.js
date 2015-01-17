@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>MainLoop.js demo</title>
+
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes"> <!-- Display full-screen in standalone mode -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+    <style>
+/* Don't highlight anything on click-and-drag. */
+:not(input):not(textarea) {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+html, body {
+    font-family: Arial,sans-serif;
+    font-size: 20px;
+    height: 100%;
+    letter-spacing: 0.5px;
+    line-height: 1.4;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+label {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+canvas {
+    background-color: #EEEEEE;
+    bottom: 0;
+    display: block;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+#fpspicker,
+#fpscounter {
+    bottom: 20px;
+    display: block;
+    left: 20px;
+    position: absolute;
+}
+
+#fpscounter {
+    left: auto;
+    right: 20px;
+}
+
+#fps {
+    margin-bottom: -5px;
+}
+
+#forkme {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+#forkme img {
+    border: 0;
+}
+    </style>
+
+    <canvas id="canvas"></canvas>
+
+    <div id="fpspicker">
+        <label for="fps">Maximum FPS:</label>
+        <input type="range" id="fps" min=1 max=60 step=1 value=60>
+        <span id="fpsvalue">60</span>
+    </div>
+
+    <div id="fpscounter">0 FPS</div>
+
+    <a href="https://github.com/IceCreamYou/MainLoop.js" id="forkme" target="_blank">
+        <img src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png">
+    </a>
+
+    <script src="../build/mainloop.min.js"></script>
+
+    <script>
+/**
+ * Draw a filled-in circle on the canvas.
+ *
+ * @param {Number} x
+ *   The x-coordinate of the center of the circle.
+ * @param {Number} y
+ *   The y-coordinate of the center of the circle.
+ * @param {Number} r
+ *   The radius of the circle.
+ * @param {Mixed} [fillStyle]
+ *   A canvas fillStyle used to fill the circle. If not specified, the circle
+ *   uses the current fillStyle.
+ *
+ * @member CanvasRenderingContext2D
+ */
+CanvasRenderingContext2D.prototype.circle = function(x, y, r, fillStyle) {
+    this.beginPath();
+    this.arc(x, y, r, 0, 2 * Math.PI, false);
+    if (fillStyle) {
+        this.fillStyle = fillStyle;
+    }
+    this.fill();
+};
+
+/**
+ * The Planet class - an orbiting circle.
+ *
+ * @param {Object} center
+ *   An object with `x` and `y` parameters representing coordinates for the
+ *   center of the planet's orbit.
+ * @param {Number} radius
+ *   The radius of the planet.
+ * @param {Number} [orbitRadius=0]
+ *   The radius of the planet's orbit.
+ * @param {Number} [velocity=0]
+ *   The velocity of the planet.
+ * @param {String} [color='black']
+ *   The color of the planet.
+ */
+function Planet(center, radius, orbitRadius, velocity, color) {
+    this.center = center;
+    this.x = center.x + orbitRadius;
+    this.y = center.y;
+    this.lastX = this.x;
+    this.lastY = this.y;
+    this.radius = radius;
+    this.orbitRadius = orbitRadius || 0;
+    this.velocity = velocity || 0;
+    this.theta = 0;
+    this.color = color || 'black';
+}
+
+/**
+ * Updates the planet's position.
+ *
+ * @param {Number} delta
+ *   The amount of time since the last time the planet was updated, in seconds.
+ */
+Planet.prototype.update = function(delta) {
+    this.lastX = this.x;
+    this.lastY = this.y;
+    this.theta += this.velocity * delta;
+    this.x = this.center.x + Math.cos(this.theta) * this.orbitRadius;
+    this.y = this.center.y + Math.sin(this.theta) * this.orbitRadius;
+};
+
+/**
+ * Draws the planet.
+ *
+ * @param {Number} interpolationPercentage
+ *   How much to interpolate between frames.
+ */
+Planet.prototype.draw = function(interpolationPercentage) {
+    // Interpolate with the last position to reduce stuttering.
+    var x = this.lastX + (this.x - this.lastX) * interpolationPercentage,
+        y = this.lastY + (this.y - this.lastY) * interpolationPercentage;
+    context.circle(x, y, this.radius, this.color);
+};
+
+/**
+ * Updates all planets.
+ *
+ * @param {Number} delta
+ *   The amount of time since the last update, in seconds.
+ */
+function update(delta) {
+    for (var i = 0, l = planets.length; i < l; i++) {
+        planets[i].update(delta);
+    }
+}
+
+/**
+ * Draws all planets.
+ *
+ * @param {Number} interpolationPercentage
+ *   How much to interpolate between frames.
+ */
+function draw(interpolationPercentage) {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    for (var i = 0, l = planets.length; i < l; i++) {
+        planets[i].draw(interpolationPercentage);
+    }
+}
+
+/**
+ * Updates the FPS counter.
+ *
+ * @param {Number} fps
+ *   The smoothed frames per second.
+ * @param {Boolean} panic
+ *   Whether the main loop panicked because the simulation fell too far behind
+ *   real time.
+ */
+function end(fps, panic) {
+    fpsCounter.textContent = parseInt(fps, 10) + ' FPS';
+    if (panic) {
+        // This pattern introduces non-deterministic behavior, but in this case
+        // it's better than the alternative (the application would look like it
+        // was running very quickly until the simulation caught up to real
+        // time). See the documentation for `MainLoop.setEnd()` for additional
+        // explanation.
+        var discardedTime = Math.round(MainLoop.resetFrameDelta());
+        console.warn('Main loop panicked, probably because the browser tab was put in the background. Discarding ' + discardedTime + 'ms');
+    }
+}
+
+// Set up the canvas.
+var canvas = document.getElementById('canvas'),
+    context = canvas.getContext('2d'),
+    fpsCounter = document.getElementById('fpscounter'),
+    fpsValue = document.getElementById('fpsvalue');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// Set up the planets.
+var smallerDimension = Math.min(window.innerWidth, window.innerHeight),
+    earthOrbitRadius = smallerDimension * 0.38,
+    moonOrbitRadius = smallerDimension * 0.10,
+    moonRadius = smallerDimension * 0.01,
+    sunRadius = earthOrbitRadius * 0.5,
+    earthRadius = earthOrbitRadius * 0.15,
+    sun = new Planet({x: canvas.width*0.5, y: canvas.height * 0.5}, sunRadius, 0, 0, '#FFD000'),
+    earth = new Planet(sun, earthRadius, earthOrbitRadius, 0.03 * Math.PI / 180, 'blue'),
+    moon = new Planet(earth, moonRadius, moonOrbitRadius, 0.1 * Math.PI / 180, 'gray'),
+    planets = [sun, earth, moon];
+
+// Start the main loop.
+MainLoop.setUpdate(update).setDraw(draw).setEnd(end).start();
+
+// Update the slider value label while the slider is being dragged.
+document.getElementById('fps').addEventListener('input', function() {
+    fpsValue.textContent = Math.round(this.value);
+});
+// Throttle the FPS when the slider value is set.
+document.getElementById('fps').addEventListener('change', function() {
+    var val = parseInt(this.value, 10);
+    MainLoop.setMaxAllowedFPS(val === 60 ? Infinity : val);
+});
+    </script>
+</body>
+</html>

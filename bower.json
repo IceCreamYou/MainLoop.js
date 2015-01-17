@@ -1,0 +1,8 @@
+{
+  "name": "MainLoop.js",
+  "version": "1.0.0",
+  "main": "build/mainloop.min.js",
+  "ignore": [
+    "node_modules"
+  ]
+}
