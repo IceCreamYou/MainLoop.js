@@ -5,12 +5,13 @@ The main loop is a core part of any application in which state changes over
 time. In games, it is typically responsible for computing physics and AI as
 well as drawing the result on the screen.
 
-Main loops are difficult to write correctly due to timing issues. **The vast
-majority of main loops found online are written incorrectly**, resulting in
-applications that speed up or slow down depending on the frame rate. This can
-cause unfortunate behavior like characters running through walls at high frame
-rates or characters being unable to jump over obstacles at low frame rates.
-These main loops also result in applications that are non-deterministic. This
+Main loops are
+[difficult to write correctly](http://www.isaacsukin.com/news/2015/01/detailed-explanation-javascript-game-loops-and-timing)
+due to timing issues. **The vast majority of main loops found online are
+written incorrectly**, resulting in applications that speed up or slow down
+depending on the frame rate. This can cause unfortunate behavior like
+characters running through walls or being unable to jump over obstacles. These
+main loops can also result in applications that are non-deterministic. This
 project solves these problems.
 
 ## Get started
@@ -20,6 +21,8 @@ project solves these problems.
  - **[API documentation](http://icecreamyou.github.com/MainLoop.js/docs/#!/api/MainLoop)**
  - **[MainLoop.js source code](https://github.com/IceCreamYou/MainLoop.js/blob/gh-pages/src/mainloop.js)**
    (heavily documented to explain how it works - the source is about 75% docs)
+ - **[How it works](http://www.isaacsukin.com/news/2015/01/detailed-explanation-javascript-game-loops-and-timing)**
+   and a detailed walkthrough of what problems this project solves
 
 ### Installation
 

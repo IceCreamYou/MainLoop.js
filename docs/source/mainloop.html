@@ -505,7 +505,7 @@ root.MainLoop = {
             // initial state before any updates occur. Instead, we run one
             // frame where all we do is draw, and then start the main loop with
             // the next frame.
-            requestAnimationFrame(function(timestamp) {
+            rafHandle = requestAnimationFrame(function(timestamp) {
                 // Render the initial state before any updates occur.
                 draw(1);
 
@@ -634,9 +634,7 @@ function animate(timestamp) {
      * same input, we would like exactly the same output. If the time between
      * frames (the `delta`) varies, our output will diverge the longer the
      * program runs due to accumulated rounding errors, even at normal frame
-     * rates. Also, if the amount of time spent simulating is consistently
-     * longer than the amount of time between frames, the application will
-     * freeze and crash in a spiral of death.
+     * rates.
      *
      * A better solution is to separate the amount of time simulated in each
      * update() from the amount of time between frames. Our update() function
@@ -646,21 +644,25 @@ function animate(timestamp) {
      * function can be run multiple times per frame if needed to simulate the
      * total amount of time passed since the last frame. (If the time that has
      * passed since the last frame is less than the fixed simulation time, we
-     * just won't run an update() until the the next frame.) This approach
-     * avoids inconsistent rounding errors and ensures that there are no giant
-     * leaps through walls between frames. It also avoids the spiral of death
-     * as long as the fixed simulation time is set to a value that is high
-     * enough that update() calls usually take less time than the amount of
-     * time they're simulating. See `MainLoop.setMaxUpdatesPerDraw()` and
-     * `MainLoop.setEnd()` for discussions of other ways to avoid the spiral of
-     * death.
+     * just won't run an update() until the the next frame. If there is
+     * unsimulated time left over that is less than our timestep, we'll just
+     * leave it to be simulated during the next frame.) This approach avoids
+     * inconsistent rounding errors and ensures that there are no giant leaps
+     * through walls between frames.
      *
-     * That is what is done below.
+     * That is what is done below. It introduces a new problem, but it is a
+     * manageable one: if the amount of time spent simulating is consistently
+     * longer than the amount of time between frames, the application could
+     * freeze and crash in a spiral of death. This won't happen as long as the
+     * fixed simulation time is set to a value that is high enough that
+     * update() calls usually take less time than the amount of time they're
+     * simulating. If it does start to happen anyway, see `MainLoop.setEnd()`
+     * for a discussion of ways to stop it.
      *
-     * See `MainLoop.setUpdate()` for a discussion of performance
+     * Additionally, see `MainLoop.setUpdate()` for a discussion of performance
      * considerations.
      *
-     * Additional reading for those interested:
+     * Further reading for those interested:
      *
      * - http://gameprogrammingpatterns.com/game-loop.html
      * - http://gafferongames.com/game-physics/fix-your-timestep/
