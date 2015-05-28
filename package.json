@@ -4,6 +4,7 @@
     "description": "A well-constructed JavaScript main loop useful for games and other animated applications.",
     "homepage": "https://github.com/IceCreamYou/MainLoop.js",
     "bugs": "https://github.com/IceCreamYou/MainLoop.js/issues",
+    "main": "build/mainloop.min.js",
     "directories": {
         "lib": "build",
         "example": "demo"
