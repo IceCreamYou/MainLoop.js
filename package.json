@@ -1,6 +1,6 @@
 {
     "name": "mainloop.js",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A well-constructed JavaScript main loop useful for games and other animated applications.",
     "homepage": "https://github.com/IceCreamYou/MainLoop.js",
     "bugs": "https://github.com/IceCreamYou/MainLoop.js/issues",
