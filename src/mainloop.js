@@ -558,11 +558,14 @@ root.MainLoop = {
  * @ignore
  */
 function animate(timestamp) {
+    // Run the loop again the next time the browser is ready to render.
+    // We set rafHandle immediately so that the next frame can be canceled
+    // during the current frame.
+    rafHandle = requestAnimationFrame(animate);
+
     // Throttle the frame rate (if minFrameDelay is set to a non-zero value by
     // `MainLoop.setMaxAllowedFPS()`).
     if (timestamp < lastFrameTimeMs + minFrameDelay) {
-        // Run the loop again the next time the browser is ready to render.
-        rafHandle = requestAnimationFrame(animate);
         return;
     }
 
@@ -712,9 +715,6 @@ function animate(timestamp) {
     end(fps, panic);
 
     panic = false;
-
-    // Run the loop again the next time the browser is ready to render.
-    rafHandle = requestAnimationFrame(animate);
 }
 
 // AMD support
