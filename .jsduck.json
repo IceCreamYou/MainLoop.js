@@ -1,0 +1,13 @@
+{
+    "--": [
+        "src"
+    ],
+    "--output": "docs",
+    "--title": "MainLoop.js Documentation",
+    "--warnings": [
+        "-global"
+    ],
+    "--local-storage-db": "jsduckml",
+    "--external": "DOMHighResTimeStamp",
+    "--footer": "<span style=\"color: #444; font-size: 12px;\"><span style=\"float: left; padding-left: 1em;\"><a href=\"https://github.com/IceCreamYou/MainLoop.js\" style=\"color: #083772;\">Fork this project on Github</a></span><span style=\"clear: both;\">By <a href=\"http://www.isaacsukin.com/\" style=\"color: #083772;\">Isaac Sukin</a> (<a href=\"https://github.com/IceCreamYou\" style=\"color: #083772;\">IceCreamYou</a>)</span></span>"
+}

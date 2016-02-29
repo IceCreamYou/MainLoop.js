@@ -30,7 +30,21 @@ module.exports = function(grunt) {
     },
     jshint: {
       options: {
-        trailing: true,
+        browser: true, // include browser globals
+        eqeqeq: true, // require strict equality
+        futurehostile: true, // warn if future-ES keywords are used
+        globals: { // globally available variable names; value = is writable
+          alert: false,
+          define: false, // for AMD exports
+          module: false, // for CommonJS exports
+        },
+        latedef: 'nofunc', // disallow using variables before they're defined
+        noarg: true, // disallow using arguments.caller and arguments.callee
+        nonbsp: true, // disallow non-breaking spaces
+        undef: true, // warn if a variable is used without being defined
+        unused: true, // warn if a variable is defined but not used
+        typed: true, // support typed array globals
+        worker: true, // support Web Worker globals
       },
       target: {
         src: [
@@ -52,21 +66,11 @@ module.exports = function(grunt) {
       files: [
         'src/mainloop.js',
       ],
-      tasks: ['uglify', 'jsduck'],
+      tasks: ['uglify', 'exec'],
     },
-    jsduck: {
-      main: {
-        src: [
-          'src'
-        ],
-        dest: 'docs',
-        options: {
-          external: ['DOMHighResTimeStamp'],
-          footer: '<span style="color: #444; font-size: 12px;"><span style="float: left; padding-left: 1em;"><a href="https://github.com/IceCreamYou/MainLoop.js" style="color: #083772;">Fork this project on Github</a></span><span style="clear: both;">By <a href="http://www.isaacsukin.com/" style="color: #083772;">Isaac Sukin</a> (<a href="https://github.com/IceCreamYou" style="color: #083772;">IceCreamYou</a>)</span></span>',
-          'local-storage-db': 'jsduckml',
-          title: 'MainLoop.js Documentation',
-          warnings: ['-global']
-        }
+    exec: {
+      jsduck: {
+        command: 'jsduck --config=.jsduck.json',
       }
     },
   });
@@ -74,8 +78,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-exec');
   grunt.loadNpmTasks('grunt-jscs');
-  grunt.loadNpmTasks('grunt-jsduck');
-  grunt.registerTask('default', ['uglify', 'jshint', 'jscs', 'jsduck']);
+  grunt.registerTask('default', ['uglify', 'jshint', 'jscs', 'exec']);
   grunt.registerTask('lint', ['jshint', 'jscs']);
 };
