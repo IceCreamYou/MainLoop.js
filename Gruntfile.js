@@ -66,12 +66,17 @@ module.exports = function(grunt) {
       files: [
         'src/mainloop.js',
       ],
-      tasks: ['uglify', 'exec'],
+      tasks: ['uglify', 'exec:jsduck_notify'],
     },
     exec: {
+      jsduck_notify: {
+        // For some reason I can't get jsduck to run programmatically on
+        // Windows, but it works manually, so this is a workaround.
+        command: 'node -p "\'You need to run \\"jsduck --config=.jsduck.json\\" from the project directory to generate updated documentation.\'"',
+      },
       jsduck: {
         command: 'jsduck --config=.jsduck.json',
-      }
+      },
     },
   });
 
@@ -80,6 +85,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-exec');
   grunt.loadNpmTasks('grunt-jscs');
-  grunt.registerTask('default', ['uglify', 'jshint', 'jscs', 'exec']);
+  grunt.registerTask('default', ['uglify', 'jshint', 'jscs', 'exec:jsduck_notify']);
   grunt.registerTask('lint', ['jshint', 'jscs']);
+  grunt.registerTask('docs', ['exec:jsduck']);
 };
