@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/IceCreamYou/MainLoop.js.svg?branch=gh-pages)](https://travis-ci.org/IceCreamYou/MainLoop.js)
+
 MainLoop.js provides a **well-constructed main loop** useful for JavaScript
 games and other animated or time-dependent applications.
 

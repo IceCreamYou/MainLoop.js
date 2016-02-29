@@ -14,3 +14,7 @@ script: grunt lint
 cache:
   directories:
   - node_modules
+
+branches:
+  only:
+    - gh-pages
