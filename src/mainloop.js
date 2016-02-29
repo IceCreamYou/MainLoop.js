@@ -722,7 +722,7 @@ if (typeof define === 'function' && define.amd) {
     define(root.MainLoop);
 }
 // CommonJS support
-else if (typeof exports === 'object') {
+else if (typeof module === 'object' && module !== null && typeof module.exports === 'object') {
     module.exports = root.MainLoop;
 }
 
