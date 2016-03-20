@@ -54,12 +54,17 @@ var simulationTimestep = 1000 / 60,
     // collection every time the main loop runs.
     panic = false,
 
+    // The object most likely to have `requestAnimationFrame` attached is
+    // `window`, if it's available in this environment. Otherwise, fall back to
+    // the root context.
+    windowOrRoot = typeof window === 'object' ? window : root,
+
     // The function that runs the main loop. The unprefixed version of
     // `window.requestAnimationFrame()` is available in all modern browsers
     // now, but node.js doesn't have it, so fall back to timers. The polyfill
     // is adapted from the MIT-licensed
     // https://github.com/underscorediscovery/realtime-multiplayer-in-html5
-    requestAnimationFrame = root.requestAnimationFrame || (function() {
+    requestAnimationFrame = windowOrRoot.requestAnimationFrame || (function() {
         var lastTimestamp = Date.now(),
             now,
             timeout;
@@ -79,7 +84,7 @@ var simulationTimestep = 1000 / 60,
     // The function that stops the main loop. The unprefixed version of
     // `window.cancelAnimationFrame()` is available in all modern browsers now,
     // but node.js doesn't have it, so fall back to timers.
-    cancelAnimationFrame = root.cancelAnimationFrame || clearTimeout,
+    cancelAnimationFrame = windowOrRoot.cancelAnimationFrame || clearTimeout,
 
     // In all major browsers, replacing non-specified functions with NOOPs
     // seems to be as fast or slightly faster than using conditions to only
