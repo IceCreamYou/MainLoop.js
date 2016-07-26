@@ -29,7 +29,7 @@ project solves these problems.
 ### Installation
 
 You can download the script normally, install it with Bower (`bower install
-MainLoop`), or install it with npm (`npm install mainloop.js`). To include it
+mainloop`), or install it with npm (`npm install mainloop.js`). To include it
 on a page client-side without a module loader:
 
 ```html
