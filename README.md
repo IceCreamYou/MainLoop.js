@@ -51,6 +51,10 @@ a module loader or want to use MainLoop server-side you can call
 `require('mainloop')` to get the `MainLoop` object or include `'mainloop'` in
 the dependencies you pass to a `define()` call.
 
+For TypeScript users, there are
+[typings](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/mainloop.js)
+available. Install them with `typings install dt~mainloop.js --global --save`.
+
 ### Usage
 
 `MainLoop` works by running functions you define every time the browser is
@@ -110,6 +114,8 @@ as node.js and io.js. There are no dependencies.
 Contributions are welcome. To get started contributing, run `npm install` in
 the project's directory, then run `grunt` before submitting a pull request to
 update the minified script and the docs as well as to perform a style check.
+
+The library is < 1KB minified and gzipped.
 
 [Isaac Sukin](http://www.isaacsukin.com/)
 ([@IceCreamYou](https://twitter.com/IceCreamYou)) is the author of this
