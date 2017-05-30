@@ -1,6 +1,6 @@
 {
     "name": "MainLoop.js",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "main": "build/mainloop.min.js",
     "keywords": [
         "main",
