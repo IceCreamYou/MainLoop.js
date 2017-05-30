@@ -24,7 +24,7 @@
     // runs. See `MainLoop.setSimulationTimestep()` for details.
 var simulationTimestep = 1000 / 60,
 
-    // The cumulative amount of in-app time that hasn't been simulated yet.
+    // The cumulative amount of in-app time that hasn&#39;t been simulated yet.
     // See the comments inside animate() for details.
     frameDelta = 0,
 
@@ -35,12 +35,23 @@ var simulationTimestep = 1000 / 60,
     // An exponential moving average of the frames per second.
     fps = 60,
 
+    // A factor that affects how heavily to weight more recent seconds&#39;
+    // performance when calculating the average frames per second. Valid values
+    // range from zero to one inclusive. Higher values result in weighting more
+    // recent seconds more heavily.
+    fpsAlpha = 0.9,
+
+    // The minimum duration between updates to the frames-per-second estimate.
+    // Higher values increase accuracy, but result in slower updates.
+    fpsUpdateInterval = 1000,
+
     // The timestamp (in milliseconds) of the last time the `fps` moving
     // average was updated.
     lastFpsUpdate = 0,
 
-    // The number of frames delivered in the current second.
-    framesThisSecond = 0,
+    // The number of frames delivered since the last time the `fps` moving
+    // average was updated (i.e. since `lastFpsUpdate`).
+    framesSinceLastFpsUpdate = 0,
 
     // The number of times update() is called in a given frame. This is only
     // relevant inside of animate(), but a reference is held externally so that
@@ -72,13 +83,13 @@ var simulationTimestep = 1000 / 60,
     panic = false,
 
     // The object most likely to have `requestAnimationFrame` attached is
-    // `window`, if it's available in this environment. Otherwise, fall back to
+    // `window`, if it&#39;s available in this environment. Otherwise, fall back to
     // the root context.
-    windowOrRoot = typeof window === 'object' ? window : root,
+    windowOrRoot = typeof window === &#39;object&#39; ? window : root,
 
     // The function that runs the main loop. The unprefixed version of
     // `window.requestAnimationFrame()` is available in all modern browsers
-    // now, but node.js doesn't have it, so fall back to timers. The polyfill
+    // now, but node.js doesn&#39;t have it, so fall back to timers. The polyfill
     // is adapted from the MIT-licensed
     // https://github.com/underscorediscovery/realtime-multiplayer-in-html5
     requestAnimationFrame = windowOrRoot.requestAnimationFrame || (function() {
@@ -100,7 +111,7 @@ var simulationTimestep = 1000 / 60,
 
     // The function that stops the main loop. The unprefixed version of
     // `window.cancelAnimationFrame()` is available in all modern browsers now,
-    // but node.js doesn't have it, so fall back to timers.
+    // but node.js doesn&#39;t have it, so fall back to timers.
     cancelAnimationFrame = windowOrRoot.cancelAnimationFrame || clearTimeout,
 
     // In all major browsers, replacing non-specified functions with NOOPs
@@ -138,7 +149,7 @@ var simulationTimestep = 1000 / 60,
  *
  * The body of this particular loop is run every time the browser is ready to
  * paint another frame. The frequency with which this happens depends primarily
- * on the monitor's refresh rate, which is typically 60 frames per second. Most
+ * on the monitor&#39;s refresh rate, which is typically 60 frames per second. Most
  * applications aim to run at 60 FPS for this reason, meaning that the main
  * loop runs about once every 16.7 milliseconds. With this target, everything
  * that happens in the main loop (e.g. all updates and drawing) needs to occur
@@ -190,7 +201,7 @@ root.MainLoop = {
      * this.
      *
      * If you are considering decreasing the simulation timestep in order to
-     * raise the maximum perceived FPS, keep in mind that most monitors can't
+     * raise the maximum perceived FPS, keep in mind that most monitors can&#39;t
      * display more than 60 FPS. Whether humans can tell the difference among
      * high frame rates depends on the application, but for reference, film is
      * usually displayed at 24 FPS, other videos at 30 FPS, most games are
@@ -257,7 +268,7 @@ root.MainLoop = {
      * @chainable
      */
     setMaxAllowedFPS: function(fps) {
-        if (typeof fps === 'undefined') {
+        if (typeof fps === &#39;undefined&#39;) {
             fps = Infinity;
         }
         if (fps === 0) {
@@ -275,9 +286,9 @@ root.MainLoop = {
      *
      * This introduces non-deterministic behavior if called after the
      * application has started running (unless it is being reset, in which case
-     * it doesn't matter). However, this can be useful in cases where the
+     * it doesn&#39;t matter). However, this can be useful in cases where the
      * amount of time that has not yet been simulated has grown very large
-     * (for example, when the application's tab gets put in the background and
+     * (for example, when the application&#39;s tab gets put in the background and
      * the browser throttles the timers as a result). In applications with
      * lockstep the player would get dropped, but in other networked
      * applications it may be necessary to snap or ease the player/user to the
@@ -357,16 +368,16 @@ root.MainLoop = {
      * - Profile your code before doing the work to move it into Web Workers.
      *   It could be the rendering that is the bottleneck, in which case the
      *   solution is to decrease the visual complexity of the scene.
-     * - It doesn't make sense to move the *entire* contents of update() into
+     * - It doesn&#39;t make sense to move the *entire* contents of update() into
      *   workers unless {@link #setDraw draw}() can interpolate between frames.
      *   The lowest-hanging fruit is background updates (like calculating
-     *   citizens' happiness in a city-building game), physics that doesn't
+     *   citizens&#39; happiness in a city-building game), physics that doesn&#39;t
      *   affect the scene (like flags waving in the wind), and anything that is
      *   occluded or happening far off screen.
      * - If draw() needs to interpolate physics based on activity that occurs
      *   in a worker, the worker needs to pass the interpolation value back to
      *   the main thread so that is is available to draw().
-     * - Web Workers can't access the state of the main thread, so they can't
+     * - Web Workers can&#39;t access the state of the main thread, so they can&#39;t
      *   directly modify objects in your scene. Moving data to and from Web
      *   Workers is a pain. The fastest way to do it is with Transferable
      *   Objects: basically, you can pass an ArrayBuffer to a worker,
@@ -406,19 +417,19 @@ root.MainLoop = {
      *     update() timesteps:  |  |  |  |  |  |  |  |  |
      *     draw() calls:        |   |   |   |   |   |   |
      *
-     * To interpolate motion for rendering purposes, objects' state after the
+     * To interpolate motion for rendering purposes, objects&#39; state after the
      * last update() must be retained and used to calculate an intermediate
      * state. Note that this means renders will be up to one update() behind.
-     * This is still better than extrapolating (projecting objects' state after
+     * This is still better than extrapolating (projecting objects&#39; state after
      * a future update()) which can produce bizarre results. Storing multiple
      * states can be difficult to set up, and keep in mind that running this
-     * process takes time that could push the frame rate down, so it's often
+     * process takes time that could push the frame rate down, so it&#39;s often
      * not worthwhile unless stuttering is visible.
      *
      * @param {Function} draw
      *   The draw() function.
      * @param {Number} [draw.interpolationPercentage]
-     *   The cumulative amount of time that hasn't been simulated yet, divided
+     *   The cumulative amount of time that hasn&#39;t been simulated yet, divided
      *   by the amount of time that will be simulated the next time update()
      *   runs. Useful for interpolating frames.
      */
@@ -500,7 +511,7 @@ root.MainLoop = {
      */
     start: function() {
         if (!started) {
-            // Since the application doesn't start running immediately, track
+            // Since the application doesn&#39;t start running immediately, track
             // whether this function was called and use that to keep it from
             // starting the main loop multiple times.
             started = true;
@@ -514,15 +525,15 @@ root.MainLoop = {
                 // Render the initial state before any updates occur.
                 draw(1);
 
-                // The application isn't considered &quot;running&quot; until the
+                // The application isn&#39;t considered &quot;running&quot; until the
                 // application starts drawing.
                 running = true;
 
                 // Reset variables that are used for tracking time so that we
-                // don't simulate time passed while the application was paused.
+                // don&#39;t simulate time passed while the application was paused.
                 lastFrameTimeMs = timestamp;
                 lastFpsUpdate = timestamp;
-                framesThisSecond = 0;
+                framesSinceLastFpsUpdate = 0;
 
                 // Start the main loop.
                 rafHandle = requestAnimationFrame(animate);
@@ -538,7 +549,7 @@ root.MainLoop = {
      * main loop is paused.
      *
      * Note that pausing in multiplayer/multi-user applications will cause the
-     * player's/user's client to become out of sync. In this case the
+     * player&#39;s/user&#39;s client to become out of sync. In this case the
      * simulation should exit, or the player/user needs to be snapped to their
      * updated position when the main loop is started again.
      *
@@ -591,7 +602,7 @@ function animate(timestamp) {
         return;
     }
 
-    // frameDelta is the cumulative amount of in-app time that hasn't been
+    // frameDelta is the cumulative amount of in-app time that hasn&#39;t been
     // simulated yet. Add the time since the last frame. We need to track total
     // not-yet-simulated time (as opposed to just the time elapsed since the
     // last frame) because not all actually elapsed time is guaranteed to be
@@ -603,20 +614,31 @@ function animate(timestamp) {
     // `MainLoop.setBegin()` for additional details on how to use this.
     begin(timestamp, frameDelta);
 
-    // Update the estimate of the frame rate, `fps`. Every second, the number
-    // of frames that occurred in that second are included in an exponential
-    // moving average of all frames per second, with an alpha of 0.25. This
-    // means that more recent seconds affect the estimated frame rate more than
-    // older seconds.
-    if (timestamp &gt; lastFpsUpdate + 1000) {
-        // Compute the new exponential moving average with an alpha of 0.25.
-        // Using constants inline is okay here.
-        fps = 0.25 * framesThisSecond + 0.75 * fps;
+    // Update the estimate of the frame rate, `fps`. Approximately every
+    // second, the number of frames that occurred in that second are included
+    // in an exponential moving average of all frames per second. This means
+    // that more recent seconds affect the estimated frame rate more than older
+    // seconds.
+    if (timestamp &gt; lastFpsUpdate + fpsUpdateInterval) {
+        // Compute the new exponential moving average.
+        fps =
+            // Divide the number of frames since the last FPS update by the
+            // amount of time that has passed to get the mean frames per second
+            // over that period. This is necessary because slightly more than a
+            // second has likely passed since the last update.
+            fpsAlpha * framesSinceLastFpsUpdate * 1000 / (timestamp - lastFpsUpdate) +
+            (1 - fpsAlpha) * fps;
 
+        // Reset the frame counter and last-updated timestamp since their
+        // latest values have now been incorporated into the FPS estimate.
         lastFpsUpdate = timestamp;
-        framesThisSecond = 0;
+        framesSinceLastFpsUpdate = 0;
     }
-    framesThisSecond++;
+    // Count the current frame in the next frames-per-second update. This
+    // happens after the previous section because the previous section
+    // calculates the frames that occur up until `timestamp`, and `timestamp`
+    // refers to a time just before the current frame was delivered.
+    framesSinceLastFpsUpdate++;
 
     /*
      * A naive way to move an object along its X-axis might be to write a main
@@ -632,7 +654,7 @@ function animate(timestamp) {
      * One solution is to multiply the speed by the amount of time that has
      * passed between rendering frames. For example, if you want your object to
      * move 600 units per second, you might write `obj.x += 600 * delta`, where
-     * `delta` is the time passed since the last frame. (For convenience, let's
+     * `delta` is the time passed since the last frame. (For convenience, let&#39;s
      * move this statement to an update() function that takes `delta` as a
      * parameter.) This way, your object will move a constant distance over
      * time. However, at low frame rates and high speeds, your object will move
@@ -646,14 +668,14 @@ function animate(timestamp) {
      *
      * A better solution is to separate the amount of time simulated in each
      * update() from the amount of time between frames. Our update() function
-     * doesn't need to change; we just need to change the delta we pass to it
+     * doesn&#39;t need to change; we just need to change the delta we pass to it
      * so that each update() simulates a fixed amount of time (that is, `delta`
      * should have the same value each time update() is called). The update()
      * function can be run multiple times per frame if needed to simulate the
      * total amount of time passed since the last frame. (If the time that has
      * passed since the last frame is less than the fixed simulation time, we
-     * just won't run an update() until the the next frame. If there is
-     * unsimulated time left over that is less than our timestep, we'll just
+     * just won&#39;t run an update() until the the next frame. If there is
+     * unsimulated time left over that is less than our timestep, we&#39;ll just
      * leave it to be simulated during the next frame.) This approach avoids
      * inconsistent rounding errors and ensures that there are no giant leaps
      * through walls between frames.
@@ -661,9 +683,9 @@ function animate(timestamp) {
      * That is what is done below. It introduces a new problem, but it is a
      * manageable one: if the amount of time spent simulating is consistently
      * longer than the amount of time between frames, the application could
-     * freeze and crash in a spiral of death. This won't happen as long as the
+     * freeze and crash in a spiral of death. This won&#39;t happen as long as the
      * fixed simulation time is set to a value that is high enough that
-     * update() calls usually take less time than the amount of time they're
+     * update() calls usually take less time than the amount of time they&#39;re
      * simulating. If it does start to happen anyway, see `MainLoop.setEnd()`
      * for a discussion of ways to stop it.
      *
@@ -704,7 +726,7 @@ function animate(timestamp) {
          * application will appear to slow down to the user until it catches
          * back up. In networked applications this will usually cause the user
          * to get out of sync with their peers, but if the updates are taking
-         * this long already, they're probably already out of sync.
+         * this long already, they&#39;re probably already out of sync.
          */
         if (++numUpdateSteps &gt;= 240) {
             panic = true;
@@ -721,10 +743,10 @@ function animate(timestamp) {
      *
      * We draw after updating because we want the screen to reflect a state of
      * the application that is as up-to-date as possible. (`MainLoop.start()`
-     * draws the very first frame in the application's initial state, before
+     * draws the very first frame in the application&#39;s initial state, before
      * any updates have occurred.) Some sources speculate that rendering
      * earlier in the requestAnimationFrame callback can get the screen painted
-     * faster; this is mostly not true, and even when it is, it's usually just
+     * faster; this is mostly not true, and even when it is, it&#39;s usually just
      * a trade-off between rendering the current frame sooner and rendering the
      * next frame later.
      *
@@ -740,11 +762,11 @@ function animate(timestamp) {
 }
 
 // AMD support
-if (typeof define === 'function' &amp;&amp; define.amd) {
+if (typeof define === &#39;function&#39; &amp;&amp; define.amd) {
     define(root.MainLoop);
 }
 // CommonJS support
-else if (typeof module === 'object' &amp;&amp; module !== null &amp;&amp; typeof module.exports === 'object') {
+else if (typeof module === &#39;object&#39; &amp;&amp; module !== null &amp;&amp; typeof module.exports === &#39;object&#39;) {
     module.exports = root.MainLoop;
 }
 
