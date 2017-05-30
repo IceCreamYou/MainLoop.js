@@ -1,0 +1,21 @@
+# NPM
+node_modules/
+
+# Windows
+Desktop.ini
+
+# JetBrains IDEs
+*.iml
+.idea/
+.webstorm/
+
+# OSX
+.DS_Store
+.AppleDouble
+.LSOverride
+**/Thumbs.db
+# Icon must end with two \r
+Icon
+
+#
+compiled

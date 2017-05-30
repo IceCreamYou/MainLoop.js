@@ -208,7 +208,7 @@ function draw(interpolationPercentage) {
  *   real time.
  */
 function end(fps, panic) {
-    fpsCounter.textContent = parseInt(fps, 10) + ' FPS';
+    fpsCounter.textContent = Math.round(fps) + ' FPS';
     if (panic) {
         // This pattern introduces non-deterministic behavior, but in this case
         // it's better than the alternative (the application would look like it

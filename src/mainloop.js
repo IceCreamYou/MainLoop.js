@@ -18,12 +18,23 @@ var simulationTimestep = 1000 / 60,
     // An exponential moving average of the frames per second.
     fps = 60,
 
+    // A factor that affects how heavily to weight more recent seconds'
+    // performance when calculating the average frames per second. Valid values
+    // range from zero to one inclusive. Higher values result in weighting more
+    // recent seconds more heavily.
+    fpsAlpha = 0.9,
+
+    // The minimum duration between updates to the frames-per-second estimate.
+    // Higher values increase accuracy, but result in slower updates.
+    fpsUpdateInterval = 1000,
+
     // The timestamp (in milliseconds) of the last time the `fps` moving
     // average was updated.
     lastFpsUpdate = 0,
 
-    // The number of frames delivered in the current second.
-    framesThisSecond = 0,
+    // The number of frames delivered since the last time the `fps` moving
+    // average was updated (i.e. since `lastFpsUpdate`).
+    framesSinceLastFpsUpdate = 0,
 
     // The number of times update() is called in a given frame. This is only
     // relevant inside of animate(), but a reference is held externally so that
@@ -505,7 +516,7 @@ root.MainLoop = {
                 // don't simulate time passed while the application was paused.
                 lastFrameTimeMs = timestamp;
                 lastFpsUpdate = timestamp;
-                framesThisSecond = 0;
+                framesSinceLastFpsUpdate = 0;
 
                 // Start the main loop.
                 rafHandle = requestAnimationFrame(animate);
@@ -586,20 +597,31 @@ function animate(timestamp) {
     // `MainLoop.setBegin()` for additional details on how to use this.
     begin(timestamp, frameDelta);
 
-    // Update the estimate of the frame rate, `fps`. Every second, the number
-    // of frames that occurred in that second are included in an exponential
-    // moving average of all frames per second, with an alpha of 0.25. This
-    // means that more recent seconds affect the estimated frame rate more than
-    // older seconds.
-    if (timestamp > lastFpsUpdate + 1000) {
-        // Compute the new exponential moving average with an alpha of 0.25.
-        // Using constants inline is okay here.
-        fps = 0.25 * framesThisSecond + 0.75 * fps;
+    // Update the estimate of the frame rate, `fps`. Approximately every
+    // second, the number of frames that occurred in that second are included
+    // in an exponential moving average of all frames per second. This means
+    // that more recent seconds affect the estimated frame rate more than older
+    // seconds.
+    if (timestamp > lastFpsUpdate + fpsUpdateInterval) {
+        // Compute the new exponential moving average.
+        fps =
+            // Divide the number of frames since the last FPS update by the
+            // amount of time that has passed to get the mean frames per second
+            // over that period. This is necessary because slightly more than a
+            // second has likely passed since the last update.
+            fpsAlpha * framesSinceLastFpsUpdate * 1000 / (timestamp - lastFpsUpdate) +
+            (1 - fpsAlpha) * fps;
 
+        // Reset the frame counter and last-updated timestamp since their
+        // latest values have now been incorporated into the FPS estimate.
         lastFpsUpdate = timestamp;
-        framesThisSecond = 0;
+        framesSinceLastFpsUpdate = 0;
     }
-    framesThisSecond++;
+    // Count the current frame in the next frames-per-second update. This
+    // happens after the previous section because the previous section
+    // calculates the frames that occur up until `timestamp`, and `timestamp`
+    // refers to a time just before the current frame was delivered.
+    framesSinceLastFpsUpdate++;
 
     /*
      * A naive way to move an object along its X-axis might be to write a main
