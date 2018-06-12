@@ -41,6 +41,9 @@ on a page client-side without a module loader:
 
 <!-- from npm -->
 <script src="node_modules/mainloop.js/build/mainloop.min.js"></script>
+
+<!-- via CDN -->
+<script src="https://cdn.jsdelivr.net/npm/mainloop.js@latest/build/mainloop.min.js"></script>
 ```
 
 You then have access to the `MainLoop` global.
