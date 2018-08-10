@@ -28,19 +28,20 @@ project solves these problems.
 
 ### Installation
 
-You can download the script normally, install it with Bower (`bower install
-mainloop`), or install it with npm (`npm install mainloop.js`). To include it
-on a page client-side without a module loader:
+You can download the script normally, install it with npm
+(`npm install mainloop.js`), or install it with Bower
+(`bower install mainloop`). To include it on a page client-side without a
+module loader:
 
 ```html
 <!-- from a direct download or git clone -->
 <script src="build/mainloop.min.js"></script>
 
-<!-- from Bower -->
-<script src="bower_components/mainloop.js/build/mainloop.min.js"></script>
-
 <!-- from npm -->
 <script src="node_modules/mainloop.js/build/mainloop.min.js"></script>
+
+<!-- from Bower -->
+<script src="bower_components/mainloop.js/build/mainloop.min.js"></script>
 
 <!-- via CDN -->
 <script src="https://cdn.jsdelivr.net/npm/mainloop.js@latest/build/mainloop.min.js"></script>
@@ -48,15 +49,15 @@ on a page client-side without a module loader:
 
 You then have access to the `MainLoop` global.
 
-MainLoop.js is also compatible with CommonJS (e.g. with node.js, io.js, or
+MainLoop.js is also compatible with CommonJS (e.g. with node.js or
 browserify) and AMD (e.g. with RequireJS). This means that if you are using
 a module loader or want to use MainLoop server-side you can call
 `require('mainloop')` to get the `MainLoop` object or include `'mainloop'` in
 the dependencies you pass to a `define()` call.
 
 For TypeScript users, there are
-[typings](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/mainloop.js)
-available. Install them with `typings install dt~mainloop.js --global --save`.
+[typings](https://www.npmjs.com/package/@types/mainloop.js)
+available. Install them with `npm install --save-dev @types/mainloop.js`.
 
 ### Usage
 
@@ -112,7 +113,7 @@ This project is
 [MIT-licensed](https://github.com/IceCreamYou/MainLoop.js/blob/gh-pages/LICENSE.txt).
 
 Compatible with all modern browsers (IE9+) including mobile browsers, as well
-as node.js and io.js. There are no dependencies.
+as node.js. There are no dependencies.
 
 Contributions are welcome. To get started contributing, run `npm install` in
 the project's directory, then run `grunt` before submitting a pull request to
