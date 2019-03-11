@@ -52,7 +52,7 @@ You then have access to the `MainLoop` global.
 MainLoop.js is also compatible with CommonJS (e.g. with node.js or
 browserify) and AMD (e.g. with RequireJS). This means that if you are using
 a module loader or want to use MainLoop server-side you can call
-`require('mainloop')` to get the `MainLoop` object or include `'mainloop'` in
+`require('mainloop.js')` to get the `MainLoop` object or include `'mainloop.js'` in
 the dependencies you pass to a `define()` call.
 
 For TypeScript users, there are
