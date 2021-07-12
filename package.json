@@ -24,11 +24,11 @@
     "license": "MIT",
     "readmeFilename": "README.md",
     "devDependencies": {
-        "grunt": "~0.4.5",
-        "grunt-contrib-jshint": "~1.0.0",
-        "grunt-contrib-uglify": "~1.0.1",
-        "grunt-contrib-watch": "~1.0.0",
-        "grunt-exec": "~0.4.6",
-        "grunt-jscs": "~2.8.0"
+        "grunt": "^1.4.1",
+        "grunt-contrib-jshint": "^2.1.0",
+        "grunt-contrib-uglify": "^5.0.1",
+        "grunt-contrib-watch": "^1.1.0",
+        "grunt-exec": "^3.0.0",
+        "grunt-jscs": "^3.0.1"
     }
 }
