@@ -18,9 +18,9 @@ project solves these problems.
 
 ## Get started
 
- - **[Example](http://icecreamyou.github.com/MainLoop.js/demo/)**
+ - **[Example](https://icecreamyou.github.io/MainLoop.js/demo/)**
    ([source code](https://github.com/IceCreamYou/MainLoop.js/blob/gh-pages/demo/index.html))
- - **[API documentation](http://icecreamyou.github.com/MainLoop.js/docs/#!/api/MainLoop)**
+ - **[API documentation](https://icecreamyou.github.io/MainLoop.js/docs/#!/api/MainLoop)**
  - **[MainLoop.js source code](https://github.com/IceCreamYou/MainLoop.js/blob/gh-pages/src/mainloop.js)**
    (heavily documented to explain how it works - the source is about 75% docs)
  - **[How it works](http://www.isaacsukin.com/news/2015/01/detailed-explanation-javascript-game-loops-and-timing)**
@@ -102,9 +102,9 @@ MainLoop.setUpdate(update).setDraw(draw).start();
 You can call `MainLoop.stop()` to stop the application.
 
 For more detail about the API, check out the
-[documentation](http://icecreamyou.github.com/MainLoop.js/docs/#!/api/MainLoop).
+[documentation](https://icecreamyou.github.io/MainLoop.js/docs/#!/api/MainLoop).
 You can also check out a
-[usage example](http://icecreamyou.github.com/MainLoop.js/demo/)
+[usage example](https://icecreamyou.github.io/MainLoop.js/demo/)
 ([source code](https://github.com/IceCreamYou/MainLoop.js/blob/gh-pages/demo/index.html)).
 
 ## Notes
