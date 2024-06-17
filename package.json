@@ -25,7 +25,7 @@
     "readmeFilename": "README.md",
     "devDependencies": {
         "grunt": "^1.4.1",
-        "grunt-contrib-jshint": "^2.1.0",
+        "grunt-contrib-jshint": "^3.2.0",
         "grunt-contrib-uglify": "^5.0.1",
         "grunt-contrib-watch": "^1.1.0",
         "grunt-exec": "^3.0.0",
