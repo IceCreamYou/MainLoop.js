@@ -59,6 +59,10 @@ For TypeScript users, there are
 [typings](https://www.npmjs.com/package/@types/mainloop.js)
 available. Install them with `npm install --save-dev @types/mainloop.js`.
 
+For Svelte users, you may want to try
+[svelte-mainloop](https://github.com/retrotheft/svelte-mainloop),
+a wrapper that adds several conveniences.
+
 ### Usage
 
 `MainLoop` works by running functions you define every time the browser is
